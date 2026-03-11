@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BANT Analyzer MVP</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .CRM_OK { background: #d4edda; color: #155724; }
+        .ERROR { background: #f8d7da; color: #721c24; }
+        .PENDING, .STT_OK, .LLM_OK { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h2>Журнал AI-анализа звонков</h2>
+    {% for call in calls %}
+    <div class="card">
+        <div>
+            <strong>Звонок ID:</strong> {{ call.call_id }} |
+            <strong>Телефон:</strong> {{ call.client_phone }} |
+            <span class="badge {{ call.status }}">{{ call.status }}</span>
+        </div>
+
+        {% if call.bant_data %}
+        <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <strong>Потребность:</strong> {{ call.bant_data.need_description or 'Не выявлено' }}<br>
+                <strong>Бюджет:</strong> {{ call.bant_data.budget_estimated }}<br>
+                <strong>Интерес:</strong> {{ call.bant_data.intent_score | upper }}
+            </div>
+            <div>
+                <strong>ЛПР:</strong> {{ call.bant_data.decision_maker | upper }}<br>
+                <strong>Сроки:</strong> {{ call.bant_data.timeline }}<br>
+                <strong>Возражения:</strong> {{ call.bant_data.objections | join(', ') }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</body>
+</html>
