@@ -62,7 +62,10 @@ def extract_bant_data(transcript: str, config) -> dict | None:
                 continue
 
             response.raise_for_status()
-            raw_text = response.json()['result']['alternatives'][0]['message']['text']
+            response_json = response.json()
+            raw_text = response_json.get("result", {}).get("alternatives", [{}])[0].get("message", {}).get("text", "")
+            if not raw_text:
+                continue
 
             # Очистка от маркдауна (если модель вернет ```json ... ```)
             clean_text = raw_text.strip().removeprefix("```json").removesuffix("```").strip()
